@@ -1,11 +1,15 @@
-from fastapi import APIRouter
-from app.core.ai_utils import improve_gbp_listing
-import json
+from fastapi import APIRouter, HTTPException
+from app.core.ai_utils import improve_gbp_listing  # using the mock-aware helper
 
-router = APIRouter()
+router = APIRouter(prefix="/gbp", tags=["GBP Analyzer"])
 
-@router.post("/gbp/analyze")
+@router.post("/analyze")
 async def analyze_gbp(data: dict):
-    improved_text = improve_gbp_listing(data)
-    return improved_text
+    try:
+        return improve_gbp_listing(data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 
